@@ -97,8 +97,8 @@
 # ==================
 Summary: Version 3.5 of the Python programming language
 Name: python%{pyshortver}
-Version: %{pybasever}.1
-Release: 14%{?dist}
+Version: %{pybasever}.2
+Release: 1%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -354,31 +354,6 @@ Patch186: 00186-dont-raise-from-py_compile.patch
 #   relying on this will fail (test_filename_changing_on_output_single_dir)
 Patch188: 00188-fix-lib2to3-tests-when-hashlib-doesnt-compile-properly.patch
 
-# 00194 #
-# Tests requiring SIGHUP to work don't work in Koji
-# see rhbz#1088233
-Patch194: temporarily-disable-tests-requiring-SIGHUP.patch
-
-# 00196 #
-#  Fix test_gdb failure on ppc64le
-Patch196: 00196-test-gdb-match-addr-before-builtin.patch
-
-# 00200 #
-# Fix for gettext plural form headers (lines that begin with "#")
-# Note: Backported from scl
-Patch200: 00200-gettext-plural-fix.patch
-
-# 00201 #
-# Fixes memory leak in gdbm module (rhbz#977308)
-# This was upstreamed as a part of bigger patch, but for our purposes
-# this is ok: http://bugs.python.org/issue18404
-# Note: Backported from scl
-Patch201: 00201-fix-memory-leak-in-gdbm.patch
-
-# 00203 #
-# test_threading fails in koji dues to it's handling of signals
-Patch203: 00203-disable-threading-test-koji.patch
-
 # 00205 #
 # LIBPL variable in makefile takes LIBPL from configure.ac
 # but the LIBPL variable defined there doesn't respect libdir macro
@@ -389,66 +364,36 @@ Patch205: 00205-make-libpl-respect-lib64.patch
 # by debian but fedora infra uses only eabi without hf
 Patch206: 00206-remove-hf-from-arm-triplet.patch
 
-# 00207 #
-# Avoid truncated _math.o files caused by parallel builds
-# modified version of https://bugs.python.org/issue24421
-# rhbz#1292461
-Patch207: 00207-math-once.patch
-
-# 00208 #
-# test_with_pip (test.test_venv.EnsurePipTest) fails on ppc64*
-# rhbz#1292467
-Patch208: 00208-disable-test_with_pip-on-ppc.patch
-
 # 00209 #
-# CVE-2016-5636: http://seclists.org/oss-sec/2016/q2/560
-# rhbz#1345859: https://bugzilla.redhat.com/show_bug.cgi?id=1345859
-# https://hg.python.org/cpython/rev/10dad6da1b28/
-# https://hg.python.org/cpython/rev/5533a9e02b21
-# Fix possible integer overflow and heap corruption in zipimporter.get_data()
-# FIXED UPSTREAM: https://bugs.python.org/issue26171
-Patch209: 00209-CVE-2016-5636-buffer-overflow-in-zipimport-module-fix.patch
-
-# 00210 #
-# CVE-2016-0772 python: smtplib StartTLS stripping attack
-# rhbz#1303647: https://bugzilla.redhat.com/show_bug.cgi?id=1303647
-# rhbz#1346345: https://bugzilla.redhat.com/show_bug.cgi?id=1346345
-# FIXED UPSTREAM: https://hg.python.org/cpython/rev/d590114c2394
-# Raise an error when STARTTLS fails
-Patch210: 00210-Raise-an-error-when-STARTTLS-fails.patch
-
-# 00211 #
 # Fix test breakage with version 2.2.0 of Expat
 # rhbz#1353918: https://bugzilla.redhat.com/show_bug.cgi?id=1353918
-# NOT YET FIXED UPSTREAM: http://bugs.python.org/issue27369
-Patch211: 00211-fix-test-pyexpat-failure.patch
+# FIXED UPSTREAM: http://bugs.python.org/issue27369
+Patch209: 00209-fix-test-pyexpat-failure.patch
 
 # 00242 #
+# HTTPoxy attack (CVE-2016-1000110)
+# https://httpoxy.org/
+# FIXED UPSTREAM: http://bugs.python.org/issue27568
+# Based on a patch by Rémi Rampin
+# Resolves: rhbz#1359177
+Patch242: 00242-CVE-2016-1000110-httpoxy.patch
+
+# 00243 #
 # Fix the triplet used on 64-bit MIPS
 # rhbz#1322526: https://bugzilla.redhat.com/show_bug.cgi?id=1322526
 # Upstream uses Debian-like style mips64-linux-gnuabi64
 # Fedora needs the default mips64-linux-gnu
-Patch242: 00242-fix-mips64-triplet.patch
+Patch243: 00243-fix-mips64-triplet.patch
 
 # (New patches go here ^^^)
 #
-# When adding new patches to "python" and "python3" in Fedora 17 onwards,
-# please try to keep the patch numbers in-sync between the two specfiles:
+# When adding new patches to "python" and "python3" in Fedora, EL, etc.,
+# please try to keep the patch numbers in-sync between all specfiles.
 #
-#   - use the same patch number across both specfiles for conceptually-equivalent
-#     fixes, ideally with the same name
+# More information, and a patch number catalog, is at:
 #
-#   - when a patch is relevant to both specfiles, use the same introductory
-#     comment in both specfiles where possible (to improve "diff" output when
-#     comparing them)
-#
-#   - when a patch is only relevant for one of the two specfiles, leave a gap
-#     in the patch numbering in the other specfile, adding a comment when
-#     omitting a patch, both in the manifest section here, and in the "prep"
-#     phase below
-#
-# Hopefully this will make it easier to ensure that all relevant fixes are
-# applied to both versions.
+#     https://fedoraproject.org/wiki/SIGs/Python/PythonPatches
+
 
 # add correct arch for ppc64/ppc64le
 # it should be ppc64le-linux-gnu/ppc64-linux-gnu instead powerpc64le-linux-gnu/powerpc64-linux-gnu
@@ -469,8 +414,8 @@ URL: http://www.python.org/
 %global __provides_exclude ^python\\(abi\\) = 3\\..$
 
 # We keep those inside on purpose
-Provides: bundled(python3-pip) = 7.1.2
-Provides: bundled(python3-setuptools) = 18.2
+Provides: bundled(python3-pip) = 8.1.1
+Provides: bundled(python3-setuptools) = 20.10.1
 
 %description
 Python 3.5 package for developers.
@@ -542,18 +487,11 @@ done
 %patch184 -p1
 %patch186 -p1
 %patch188 -p1
-
-%patch194 -p1
-%patch196 -p1
-%patch203 -p1
 %patch205 -p1
 %patch206 -p1
-%patch207 -p1
-%patch208 -p1
 %patch209 -p1
-%patch210 -p1
-%patch211 -p1
 %patch242 -p1
+%patch243 -p1
 
 # Currently (2010-01-15), http://docs.python.org/library is for 2.6, and there
 # are many differences between 2.6 and the Python 3 library.
@@ -1391,5 +1329,8 @@ CheckPython optimized
 # ======================================================
 
 %changelog
+* Mon Aug 15 2016 Tomas Orsava <torsava@redhat.com> - 3.5.2-1
+- Rebased to version 3.5.2 from F26
+
 * Tue Aug 09 2016 Miro Hrončok <mhroncok@redhat.com> - 3.5.1-14
 - Imported from F25
