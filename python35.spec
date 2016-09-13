@@ -98,7 +98,7 @@
 Summary: Version 3.5 of the Python programming language
 Name: python%{pyshortver}
 Version: %{pybasever}.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -1018,6 +1018,10 @@ CheckPython optimized
 # ======================================================
 
 %changelog
+* Tue Sep 13 2016 Miro Hrončok <mhroncok@redhat.com> - 3.5.2-2
+- Fixed .pyc bytecompilation
+- Remove unused configure flags
+
 * Mon Aug 15 2016 Tomas Orsava <torsava@redhat.com> - 3.5.2-1
 - Rebased to version 3.5.2 from F26
 
