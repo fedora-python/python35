@@ -579,9 +579,9 @@ BuildPython debug \
   python-debug \
   python%{pybasever}-debug \
 %ifarch %{ix86} x86_64 ppc %{power64}
-  "--with-pydebug --with-tsc --with-count-allocs --with-call-profile --without-ensurepip" \
+  "--with-pydebug --with-tsc --without-ensurepip" \
 %else
-  "--with-pydebug --with-count-allocs --with-call-profile --without-ensurepip" \
+  "--with-pydebug --without-ensurepip" \
 %endif
   false \
   -O0
